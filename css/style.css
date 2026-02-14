@@ -751,6 +751,11 @@ footer {
     border-color: var(--accent-primary);
     box-shadow: 0 0 15px var(--accent-secondary);
 }
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
 
 .linkedin-link {
     display: inline-block;
