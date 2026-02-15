@@ -11,15 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Smooth Scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
+
 
     // FAQ Toggle
     const faqItems = document.querySelectorAll('.faq-item');
@@ -91,79 +83,90 @@ document.addEventListener('DOMContentLoaded', () => {
             timerContainer.innerHTML = "<div style='font-size: 2rem; color: #ffffff;'>Event Started!</div>";
         }
     }, 1000);
-const menuToggle = document.getElementById("menu-toggle");
-const navLinks = document.getElementById("nav-links");
 
-menuToggle.addEventListener("click", () => {
-  navLinks.classList.toggle("active");
-});
-
-    // Mobile Menu Toggle (Basic implementation)
-    // Create hamburger icon
+    // Mobile Menu Toggle
     const nav = document.querySelector('nav');
     const hamburger = document.createElement('div');
     hamburger.className = 'hamburger';
     hamburger.innerHTML = '<i class="fas fa-bars"></i>';
-    hamburger.style.fontSize = '1.5rem';
-    hamburger.style.cursor = 'pointer';
-    hamburger.style.display = 'none'; // Hidden on desktop by CSS media query usually, but we'll control via js/css mix
+    // Styling handled in CSS now
 
-    // Add logic to show/hide based on screen size could be done in CSS, but let's add the element
     nav.insertBefore(hamburger, nav.querySelector('.btn'));
 
-    // Mobile specific styles injection for hamburger
-    const style = document.createElement('style');
-    style.textContent = `
-        @media (max-width: 768px) {
-            .hamburger { display: block !important; }
-            .nav-links { 
-                position: fixed; 
-                top: 80px; 
-                right: -100%; 
-                width: 100%; 
-                height: calc(100vh - 80px); 
-                background: rgba(10, 10, 10, 0.95); 
-                flex-direction: column; 
-                align-items: center; 
-                justify-content: center; 
-                transition: right 0.3s ease; 
-                backdrop-filter: blur(10px);
-            }
-            .nav-links.active { right: 0; }
-            .nav-links li { margin: 20px 0; }
-            .nav-links a { font-size: 1.5rem; }
-            nav .btn { display: none; } /* Hide register button in nav on mobile for space, or move it to menu */
-        }
-    `;
-    document.head.appendChild(style);
+    const navLinksContainer = document.querySelector('.nav-links');
 
-    hamburger.addEventListener('click', () => {
-        const navLinks = document.querySelector('.nav-links');
-        navLinks.classList.toggle('active');
+    function toggleMobileMenu() {
+        navLinksContainer.classList.toggle('active');
         const icon = hamburger.querySelector('i');
-        if (navLinks.classList.contains('active')) {
+        if (navLinksContainer.classList.contains('active')) {
             icon.classList.remove('fa-bars');
             icon.classList.add('fa-times');
         } else {
             icon.classList.remove('fa-times');
             icon.classList.add('fa-bars');
         }
-    });
+    }
 
-    // Close mobile menu when nk clicked
+    hamburger.addEventListener('click', toggleMobileMenu);
+
+    // Close mobile menu when a link is clicked
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', () => {
-            const navLinks = document.querySelector('.nav-links');
-            if (navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                hamburger.querySelector('i').classList.remove('fa-times');
-                hamburger.querySelector('i').classList.add('fa-bars');
+            if (navLinksContainer.classList.contains('active')) {
+                toggleMobileMenu();
             }
         });
     });
 
+    // SPA View Switching Logic
+    const homeView = document.getElementById('home-view');
+    const teamView = document.getElementById('team-view');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const logoLink = document.querySelector('.logo a');
 
-    // Scroll Animation Observer
+    function showView(viewName) {
+        if (viewName === 'team') {
+            homeView.classList.add('hidden');
+            teamView.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        } else {
+            teamView.classList.add('hidden');
+            homeView.classList.remove('hidden');
+            // Check if we need to scroll to a section
+            if (viewName.startsWith('#')) {
+                const section = document.querySelector(viewName);
+                if (section) {
+                    setTimeout(() => {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                    }, 50); // Small delay to allow rendering
+                }
+            } else if (viewName === 'home') {
+                window.scrollTo(0, 0);
+            }
+        }
+    }
+
+    // Attach click handlers
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const href = link.getAttribute('href');
+
+            if (href === '#team') {
+                showView('team');
+            } else {
+                showView(href);
+            }
+        });
+    });
+
+    // Handle Logo Click
+    if (logoLink) {
+        logoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showView('home');
+        });
+    }
     const revealElements = document.querySelectorAll('.card, .section-padding h2, .timeline-item');
 
     // Add reveal class to elements
