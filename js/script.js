@@ -109,22 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     hamburger.addEventListener('click', toggleMobileMenu);
 
-    // Close mobile menu when a link is clicked
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            if (navLinksContainer.classList.contains('active')) {
-                toggleMobileMenu();
-            }
-        });
-    });
-
-    // SPA View Switching Logic
+    // Unified Navigation Logic
     const homeView = document.getElementById('home-view');
     const teamView = document.getElementById('team-view');
-    const navLinks = document.querySelectorAll('.nav-links a');
+    const navLinksList = document.querySelectorAll('.nav-links a');
     const logoLink = document.querySelector('.logo a');
 
     function showView(viewName) {
+        // Hide/Show Views
         if (viewName === 'team') {
             homeView.classList.add('hidden');
             teamView.classList.remove('hidden');
@@ -132,13 +124,18 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             teamView.classList.add('hidden');
             homeView.classList.remove('hidden');
-            // Check if we need to scroll to a section
+
+            // Handle Scrolling for Home Sections
             if (viewName.startsWith('#')) {
+                // If it's just #, don't scroll
+                if (viewName === '#') return;
+
                 const section = document.querySelector(viewName);
                 if (section) {
+                    // Timeout to ensure display:none is removed before calculating scroll
                     setTimeout(() => {
                         section.scrollIntoView({ behavior: 'smooth' });
-                    }, 50); // Small delay to allow rendering
+                    }, 10);
                 }
             } else if (viewName === 'home') {
                 window.scrollTo(0, 0);
@@ -146,12 +143,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Attach click handlers
-    navLinks.forEach(link => {
+    // Attach Click Handlers to All Nav Links
+    navLinksList.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const href = link.getAttribute('href');
 
+            // Close mobile menu if open
+            if (navLinksContainer.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+
+            // Route
             if (href === '#team') {
                 showView('team');
             } else {
