@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoLink = document.querySelector('.logo a');
 
     function showView(viewName) {
+        console.log('Switching to view:', viewName); // Debug log
         // Hide/Show Views
         if (viewName === 'team') {
             homeView.classList.add('hidden');
@@ -123,13 +124,16 @@ document.addEventListener('DOMContentLoaded', () => {
             window.scrollTo(0, 0);
 
             // Load Team Content if not loaded
-            if (!teamView.hasChildNodes()) {
+            if (!teamView.hasChildNodes() || teamView.innerHTML.includes('Failed to load')) {
+                console.log('Fetching team.html...'); // Debug log
                 fetch('team.html')
                     .then(response => {
+                        console.log('Fetch response:', response.status); // Debug log
                         if (!response.ok) throw new Error('Failed to load team content');
                         return response.text();
                     })
                     .then(html => {
+                        console.log('Team content loaded'); // Debug log
                         teamView.innerHTML = html;
                         // Re-initialize observers for new content
                         const newCards = teamView.querySelectorAll('.card');
@@ -155,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                     .catch(error => {
                         console.error('Error loading team page:', error);
-                        teamView.innerHTML = '<div class="container"><h2 style="text-align:center;color:white;">Failed to load Team content. Please check connection.</h2></div>';
+                        teamView.innerHTML = '<div class="container"><h2 style="text-align:center;color:white;margin-top:50px;">Failed to load Team content.<br>If you are opening this file locally, browsers block this for security.<br>Please use "Live Server" or host on GitHub.</h2></div>';
                     });
             }
 
