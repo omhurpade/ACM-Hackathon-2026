@@ -121,6 +121,44 @@ document.addEventListener('DOMContentLoaded', () => {
             homeView.classList.add('hidden');
             teamView.classList.remove('hidden');
             window.scrollTo(0, 0);
+
+            // Load Team Content if not loaded
+            if (!teamView.hasChildNodes()) {
+                fetch('team.html')
+                    .then(response => {
+                        if (!response.ok) throw new Error('Failed to load team content');
+                        return response.text();
+                    })
+                    .then(html => {
+                        teamView.innerHTML = html;
+                        // Re-initialize observers for new content
+                        const newCards = teamView.querySelectorAll('.card');
+                        newCards.forEach(card => {
+                            card.classList.add('reveal');
+                            revealObserver.observe(card);
+
+                            // Add Tilt Effect
+                            card.addEventListener('mousemove', (e) => {
+                                const rect = card.getBoundingClientRect();
+                                const x = e.clientX - rect.left;
+                                const y = e.clientY - rect.top;
+                                const centerX = rect.width / 2;
+                                const centerY = rect.height / 2;
+                                const rotateX = ((y - centerY) / centerY) * -10;
+                                const rotateY = ((x - centerX) / centerX) * 10;
+                                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+                            });
+                            card.addEventListener('mouseleave', () => {
+                                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading team page:', error);
+                        teamView.innerHTML = '<div class="container"><h2 style="text-align:center;color:white;">Failed to load Team content. Please check connection.</h2></div>';
+                    });
+            }
+
         } else {
             teamView.classList.add('hidden');
             homeView.classList.remove('hidden');
