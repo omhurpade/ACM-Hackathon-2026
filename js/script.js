@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
         messageDiv.classList.add('message', className);
         messageDiv.textContent = text;
         chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        chatMessages.scrollTop = chatMessages.scrollHeight; 
     }
 
     function getBotResponse(input) {
