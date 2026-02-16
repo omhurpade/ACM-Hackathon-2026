@@ -144,7 +144,7 @@ h2 {
 }
 
 /* Scroll Animations */
-.reveal {
+.active {
     opacity: 0;
     transform: translateY(30px);
     transition: all 0.8s ease;
