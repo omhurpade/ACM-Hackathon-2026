@@ -817,7 +817,12 @@ footer {
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
+} 
+.team-card,
+.team-card * {
+    transform: none !important;
 }
+
 .team-card:hover .team-img-placeholder {
     transform: scale(1.1) rotate(5deg);
     border-color: var(--accent-primary);
